@@ -1,0 +1,17 @@
+.logRenderer {
+  display: flex;
+  flex: 1;
+  justify-content: flex-start;
+}
+
+.logRenderer--note {
+  color: rgba(0, 0, 0, 0.4);
+}
+
+.logRenderer--event {
+  color: rgba(210, 20, 66, 0.75);
+}
+
+.logRenderer-type {
+  color: #d44c21;
+}

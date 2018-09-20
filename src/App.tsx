@@ -1,19 +1,18 @@
-import * as React from 'react';
-import './App.css';
-
-import logo from './logo.svg';
+import * as React from "react";
+import "./App.css";
+import { Log } from "./components/Log";
+import { logService } from "./services/LogService";
 
 class App extends React.Component {
   public render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.tsx</code> and save to reload.
-        </p>
+      <div className="grid">
+        <div className="grid-section grid-section--log">
+          <div># Log</div>
+          <Log logService={logService} />
+        </div>
+        <div className="grid-section grid-section--filter">Filter</div>
+        <div className="grid-section grid-section--tasks">Tasks</div>
       </div>
     );
   }

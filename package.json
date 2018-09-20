@@ -3,9 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "immutable": "^3.8.2",
     "react": "^16.5.1",
     "react-dom": "^16.5.1",
-    "react-scripts-ts": "2.17.0"
+    "react-scripts-ts": "2.17.0",
+    "slate": "^0.40.2",
+    "slate-react": "^0.18.5"
   },
   "scripts": {
     "start": "react-scripts-ts start",
@@ -18,6 +21,7 @@
     "@types/node": "^10.9.4",
     "@types/react": "^16.4.14",
     "@types/react-dom": "^16.0.7",
+    "@types/slate-react": "^0.18.0",
     "typescript": "^3.0.3"
   }
 }
