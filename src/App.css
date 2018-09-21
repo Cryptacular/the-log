@@ -7,6 +7,9 @@
 
 .grid-section {
   margin: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: stretch;
 }
 
 .grid-section--log {
