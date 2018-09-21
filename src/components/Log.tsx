@@ -1,9 +1,9 @@
 import * as React from "react";
-import { Value } from "slate";
-import { Editor } from "slate-react";
+import { Change, Value } from "slate";
+import { Editor, RenderNodeProps } from "slate-react";
 import { ILog } from "../models/ILog";
 import { ILogService } from "../services/ILogService";
-// import { LogRenderer } from "./LogRenderer";
+import "./Log.css";
 
 const initialValue = Value.fromJSON({
   document: {
@@ -52,7 +52,12 @@ export class Log extends React.Component<ILogProps, ILogState> {
     const { editorValue } = this.state;
     return (
       <div className="log">
-        <Editor value={editorValue} onChange={this.onChange} />
+        <Editor
+          value={editorValue}
+          onChange={this.onChange}
+          onKeyDown={this.onKeyDown}
+          renderNode={this.renderNode}
+        />
       </div>
     );
   }
@@ -69,5 +74,28 @@ export class Log extends React.Component<ILogProps, ILogState> {
     this.setState({
       editorValue: value
     });
+  }
+
+  private onKeyDown(event: Event, change: Change) {
+    const text = change.value.focusText;
+    if (
+      text.getText() !== "- " ||
+      change.value.blocks.some(
+        block => block !== undefined && block.type === "list"
+      )
+    ) {
+      return;
+    }
+    event.preventDefault();
+    change.setBlocks("list");
+  }
+
+  private renderNode(props: RenderNodeProps) {
+    switch ((props.node as any).type) {
+      case "list":
+        return <div {...props} className="log log--note" />;
+      default:
+        return;
+    }
   }
 }
