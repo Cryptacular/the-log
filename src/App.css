@@ -30,3 +30,15 @@
   grid-row-end: bottom;
   align-self: end;
 }
+
+.log-title {
+  font-size: 36px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.log-title::before {
+  content: "# ";
+  color: #d44c21;
+  font-weight: normal;
+}

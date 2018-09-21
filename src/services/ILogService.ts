@@ -1,5 +1,4 @@
-import { ILog } from "../models/ILog";
-
 export interface ILogService {
-  GetAll(): ILog[];
+  Get(): string;
+  Save(content: string): void;
 }

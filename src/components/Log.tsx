@@ -1,37 +1,15 @@
 import * as React from "react";
 import { Change, Value } from "slate";
 import { Editor, RenderNodeProps } from "slate-react";
-import { ILog } from "../models/ILog";
+import { logTypes } from "../config/logTypes";
 import { ILogService } from "../services/ILogService";
 import "./Log.css";
-
-const initialValue = Value.fromJSON({
-  document: {
-    nodes: [
-      {
-        nodes: [
-          {
-            leaves: [
-              {
-                text: "A line of text in a paragraph."
-              }
-            ],
-            object: "text"
-          }
-        ],
-        object: "block",
-        type: "paragraph"
-      }
-    ]
-  }
-});
 
 interface ILogProps {
   logService: ILogService;
 }
 
 interface ILogState {
-  logs: ILog[];
   editorValue: Value;
 }
 
@@ -41,9 +19,9 @@ export class Log extends React.Component<ILogProps, ILogState> {
   constructor(props: ILogProps) {
     super(props);
     this.logService = props.logService;
+    const initialValue = this.logService.Get();
     this.state = {
-      editorValue: initialValue,
-      logs: []
+      editorValue: Value.fromJSON(JSON.parse(initialValue))
     };
     this.onChange = this.onChange.bind(this);
   }
@@ -62,40 +40,59 @@ export class Log extends React.Component<ILogProps, ILogState> {
     );
   }
 
-  public componentDidMount() {
-    const logs = this.logService.GetAll();
-    this.setState({
-      logs
-    });
-  }
-
   private onChange(e: any) {
     const { value } = e;
     this.setState({
       editorValue: value
     });
+    const content = JSON.stringify(value.toJSON());
+    this.logService.Save(content);
   }
 
-  private onKeyDown(event: Event, change: Change) {
-    const text = change.value.focusText;
-    if (
-      text.getText() !== "- " ||
-      change.value.blocks.some(
-        block => block !== undefined && block.type === "list"
-      )
-    ) {
-      return;
+  private onKeyDown(event: KeyboardEvent, change: Change) {
+    const text = change.value.startText.getText();
+    const key = (event as any).key;
+
+    if (text.length === 0) {
+      for (const type in logTypes) {
+        if (logTypes.hasOwnProperty(type)) {
+          const char = logTypes[type];
+          if (char === key) {
+            change.setBlocks(type);
+            event.preventDefault();
+            break;
+          }
+        }
+      }
+
+      if (key === " ") {
+        event.preventDefault();
+      }
     }
-    event.preventDefault();
-    change.setBlocks("list");
+
+    if (key === "d" && (event.ctrlKey || event.metaKey)) {
+      const currentBlocks = change.value.blocks;
+
+      if (currentBlocks.some(b => !!b && b.type === "task")) {
+        change.setBlocks("done");
+      } else if (currentBlocks.some(b => !!b && b.type === "done")) {
+        change.setBlocks("task");
+      }
+    }
   }
 
   private renderNode(props: RenderNodeProps) {
-    switch ((props.node as any).type) {
-      case "list":
-        return <div {...props} className="log log--note" />;
-      default:
-        return;
-    }
+    const node = props.node as any;
+    const logType = node.type;
+
+    return (
+      <div className="log-itemContainer">
+        <span className="log-type">
+          {logTypes[logType]}
+          &nbsp;
+        </span>
+        <span {...props} className={`log-item log-item--${logType}`} />
+      </div>
+    );
   }
 }

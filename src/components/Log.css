@@ -1,17 +1,32 @@
 .log {
+  height: 100%;
+  overflow-y: auto;
+}
+
+.log-itemContainer {
   display: flex;
   flex: 1;
   justify-content: flex-start;
 }
 
-.log--note {
+.log-item {
+  flex: 1;
+  margin-bottom: 5px;
+}
+
+.log-item--note {
   color: rgba(0, 0, 0, 0.4);
 }
 
-.log--event {
+.log-item--event {
   color: rgba(210, 20, 66, 0.75);
 }
 
-.log-type {
+.log-item--done {
+  text-decoration: line-through;
+  font-style: italic;
+}
+
+.log-item-type {
   color: #d44c21;
 }
