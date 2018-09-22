@@ -14,3 +14,4 @@ A simple Electron app for taking notes and tracking tasks.
 - [ ] Add support for tags
 - [ ] Filter by tags
 - [ ] Add date stamps when an item is added on a new day
+- [ ] Add app icon

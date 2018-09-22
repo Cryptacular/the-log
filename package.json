@@ -2,8 +2,8 @@
   "name": "the-log",
   "version": "0.1.0",
   "private": true,
-  "main": "electron.js",
-  "homepage": "./",
+  "main": "src/electron.js",
+  "homepage": "../build/",
   "dependencies": {
     "immutable": "^3.8.2",
     "react": "^16.5.1",
@@ -17,9 +17,17 @@
     "build": "react-scripts-ts build",
     "electron": "concurrently \"npm run start\" \"ELECTRON_START_URL=http://localhost:3000 electron .\"",
     "electron-win": "concurrently \"npm run start\" \"set ELECTRON_START_URL=http://localhost:3000 && electron .\"",
-    "electron-prod": "npm run build && electron-packager . \"The Log\" --out=bin --overwrite",
+    "electron-build": "npm run build && electron-builder build",
     "test": "react-scripts-ts test --env=jsdom",
     "eject": "react-scripts-ts eject"
+  },
+  "build": {
+    "appId": "com.cryptacular.thelog",
+    "productName": "The Log",
+    "files": [
+      "build/**/*",
+      "src/**/*"
+    ]
   },
   "devDependencies": {
     "@types/jest": "^23.3.2",
@@ -29,7 +37,7 @@
     "@types/slate-react": "^0.18.0",
     "concurrently": "^4.0.1",
     "electron": "^2.0.10",
-    "electron-packager": "^12.1.2",
+    "electron-builder": "^20.28.4",
     "typescript": "^3.0.3"
   }
 }
