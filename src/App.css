@@ -24,6 +24,11 @@
   content: " #";
 }
 
+.grid-section--right .log-itemContainer,
+.grid-section--right .log-type {
+  flex-direction: row-reverse;
+}
+
 .grid-section--log {
   grid-column-start: left;
   grid-column-end: left;

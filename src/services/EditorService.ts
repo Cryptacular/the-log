@@ -1,4 +1,5 @@
 import { BlockJSON, TextJSON, Value, ValueJSON } from "slate";
+import { StringHelpers } from "../helpers/StringHelpers";
 import { LogItem } from "../models/LogItem";
 import { LogType } from "../models/LogType";
 import { IEditorService } from "./IEditorService";
@@ -52,8 +53,10 @@ const convertToLog = (value: ValueJSON): LogItem[] => {
       return null;
     }
 
+    const logType = StringHelpers.toPascalCase(type);
+
     return new LogItem(
-      LogType[type],
+      LogType[logType],
       data.created,
       nodes.map((x: TextJSON) => x.leaves.map(l => l.text).join("\n")).join(),
       data.tags,

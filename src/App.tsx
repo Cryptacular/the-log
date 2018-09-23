@@ -2,8 +2,10 @@ import * as React from "react";
 import { Change, Value } from "slate";
 import "./App.css";
 import { Log } from "./components/Log";
+import { Tasks } from "./components/Tasks";
 import { BulletType } from "./models/BulletType";
 import { LogItem } from "./models/LogItem";
+import { LogType } from "./models/LogType";
 import { IEditorService } from "./services/IEditorService";
 import { ILogService } from "./services/ILogService";
 
@@ -31,10 +33,11 @@ class App extends React.Component<IAppProps, IAppState> {
     };
 
     this.onEditorChange = this.onEditorChange.bind(this);
+    this.onKeyDown = this.onKeyDown.bind(this);
   }
 
   public render() {
-    const { editorValue } = this.state;
+    const { editorValue, logs } = this.state;
 
     return editorValue !== null ? (
       <div className="grid">
@@ -51,6 +54,7 @@ class App extends React.Component<IAppProps, IAppState> {
         </div>
         <div className="grid-section grid-section--tasks grid-section--right">
           <div className="log-title">Tasks</div>
+          <Tasks tasks={logs.filter(l => l.type === LogType.Task)} />
         </div>
       </div>
     ) : (
@@ -66,11 +70,12 @@ class App extends React.Component<IAppProps, IAppState> {
 
   private onEditorChange(event: any) {
     const { value } = event;
+    const logs = this.editorService.valueToLog(value);
     this.setState({
-      editorValue: value
+      editorValue: value,
+      logs
     });
-    const content = this.editorService.valueToLog(value);
-    this.logService.Save(content);
+    this.logService.Save(logs);
   }
 
   private onKeyDown(event: KeyboardEvent, change: Change) {

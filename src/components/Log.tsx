@@ -37,8 +37,8 @@ export class Log extends React.Component<ILogProps> {
     return (
       <div className="log-itemContainer">
         <span className="log-type">
-          {BulletType[logType]}
-          &nbsp;
+          <span>{BulletType[logType]}</span>
+          <span>&nbsp;</span>
         </span>
         <span
           {...props}

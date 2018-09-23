@@ -4,7 +4,7 @@ import { ILogService } from "./ILogService";
 
 class LogService implements ILogService {
   public Get(): LogItem[] {
-    const content = /*localStorage.getItem("content") ||*/ initialEditorValue;
+    const content = localStorage.getItem("content") || initialEditorValue;
     const logs = JSON.parse(content);
     return logs;
   }

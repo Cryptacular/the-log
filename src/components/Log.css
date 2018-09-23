@@ -10,6 +10,8 @@
 }
 
 .log-type {
+  display: flex;
+  flex-direction: row;
   color: #d44c21;
 }
 
