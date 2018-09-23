@@ -1,97 +1,49 @@
 import * as React from "react";
 import { Change, Value } from "slate";
 import { Editor, RenderNodeProps } from "slate-react";
-import { logTypes } from "../config/logTypes";
-import { ILogService } from "../services/ILogService";
+import { StringHelpers } from "../helpers/StringHelpers";
+import { BulletType } from "../models/BulletType";
 import "./Log.css";
 
 interface ILogProps {
-  logService: ILogService;
+  value: Value;
+  onChange: (event: any) => void;
+  onKeyDown: (event: KeyboardEvent, change: Change) => void;
 }
 
-interface ILogState {
-  editorValue: Value;
-}
-
-export class Log extends React.Component<ILogProps, ILogState> {
-  private logService: ILogService;
-
+export class Log extends React.Component<ILogProps> {
   constructor(props: ILogProps) {
     super(props);
-    this.logService = props.logService;
-    const initialValue = this.logService.Get();
-    this.state = {
-      editorValue: Value.fromJSON(JSON.parse(initialValue))
-    };
-    this.onChange = this.onChange.bind(this);
   }
 
   public render() {
-    const { editorValue } = this.state;
+    const { value, onChange, onKeyDown } = this.props;
     return (
       <div className="log">
         <Editor
-          value={editorValue}
-          onChange={this.onChange}
-          onKeyDown={this.onKeyDown}
+          value={value}
+          onChange={onChange}
+          onKeyDown={onKeyDown}
           renderNode={this.renderNode}
         />
       </div>
     );
   }
 
-  private onChange(e: any) {
-    const { value } = e;
-    this.setState({
-      editorValue: value
-    });
-    const content = JSON.stringify(value.toJSON());
-    this.logService.Save(content);
-  }
-
-  private onKeyDown(event: KeyboardEvent, change: Change) {
-    const text = change.value.startText.getText();
-    const key = (event as any).key;
-
-    if (text.length === 0) {
-      for (const type in logTypes) {
-        if (logTypes.hasOwnProperty(type)) {
-          const char = logTypes[type];
-          if (char === key) {
-            change.setBlocks(type);
-            event.preventDefault();
-            break;
-          }
-        }
-      }
-
-      if (key === " ") {
-        event.preventDefault();
-      }
-    }
-
-    if (key === "d" && (event.ctrlKey || event.metaKey)) {
-      const currentBlocks = change.value.blocks;
-
-      if (currentBlocks.some(b => !!b && b.type === "task")) {
-        change.setBlocks("done");
-      } else if (currentBlocks.some(b => !!b && b.type === "done")) {
-        change.setBlocks("task");
-      }
-    }
-  }
-
   private renderNode(props: RenderNodeProps) {
     const node = props.node as any;
-    const logType = node.type;
+    const logType = StringHelpers.toPascalCase(node.type);
 
     return (
       <div className="log-itemContainer">
         <span className="log-type">
-          {logTypes[logType]}
+          {BulletType[logType]}
           &nbsp;
         </span>
-        <span {...props} className={`log-item log-item--${logType}`} />
+        <span
+          {...props}
+          className={`log-item log-item--${logType.toLowerCase()}`}
+        />
       </div>
     );
   }

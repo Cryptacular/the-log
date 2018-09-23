@@ -1,4 +1,6 @@
+import { LogItem } from "../models/LogItem";
+
 export interface ILogService {
-  Get(): string;
-  Save(content: string): void;
+  Get(): LogItem[];
+  Save(logs: LogItem[]): void;
 }

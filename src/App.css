@@ -12,6 +12,18 @@
   justify-content: stretch;
 }
 
+.grid-section--right {
+  text-align: right;
+}
+
+.grid-section--right .log-title::before {
+  content: none;
+}
+
+.grid-section--right .log-title::after {
+  content: " #";
+}
+
 .grid-section--log {
   grid-column-start: left;
   grid-column-end: left;
@@ -40,8 +52,13 @@
   margin-bottom: 20px;
 }
 
-.log-title::before {
+.log-title::before,
+.log-title::after {
   content: "# ";
   color: #d44c21;
   font-weight: normal;
+}
+
+.log-title::after {
+  content: none;
 }

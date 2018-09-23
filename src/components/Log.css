@@ -9,6 +9,10 @@
   justify-content: flex-start;
 }
 
+.log-type {
+  color: #d44c21;
+}
+
 .log-item {
   flex: 1;
   margin-bottom: 5px;
