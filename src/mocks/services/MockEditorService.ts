@@ -1,12 +1,12 @@
-import { Value } from "slate";
-import { LogItem } from "../../models/LogItem";
-import { IEditorService } from "../../services/IEditorService";
+import { Value } from 'slate';
+import { LogDay } from '../../models/LogDay';
+import { IEditorService } from '../../services/IEditorService';
 
 class MockEditorService implements IEditorService {
-  public logToValue(content: LogItem[]): Value {
+  public logDayToValue(content: LogDay[]): Value {
     return Value.fromJSON({});
   }
-  public valueToLog(value: Value): LogItem[] {
+  public valueToLogDay(value: Value): LogDay[] {
     return [];
   }
 }

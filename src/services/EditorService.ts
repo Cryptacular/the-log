@@ -1,77 +1,104 @@
-import { BlockJSON, TextJSON, Value, ValueJSON } from "slate";
-import { StringHelpers } from "../helpers/StringHelpers";
-import { LogItem } from "../models/LogItem";
-import { LogType } from "../models/LogType";
-import { IEditorService } from "./IEditorService";
+import { BlockJSON, TextJSON, Value, ValueJSON } from 'slate';
+import { StringHelpers } from '../helpers/StringHelpers';
+import { LogDay } from '../models/LogDay';
+import { LogItem } from '../models/LogItem';
+import { LogType } from '../models/LogType';
+import { IEditorService } from './IEditorService';
 
 class EditorService implements IEditorService {
-  public logToValue(logs: LogItem[]): Value {
+  public logDayToValue(logs: LogDay[]): Value {
     return Value.fromJSON(convertToValue(logs));
   }
 
-  public valueToLog(value: Value): LogItem[] {
+  public valueToLogDay(value: Value): LogDay[] {
     const valueJson = value.toJSON();
     return convertToLog(valueJson);
   }
 }
 
-const convertToValue = (logs: LogItem[]): ValueJSON => {
+const convertToValue = (logDays: LogDay[]): ValueJSON => {
   return {
     document: {
-      nodes: logs.map<BlockJSON>(l => {
+      nodes: logDays.map<BlockJSON>(ld => {
         return {
           data: {
-            created: l.created,
-            tags: l.tags.map(t => ({ id: t.id, name: t.name }))
+            created: ld.created
           },
-          nodes: [
-            {
-              leaves: [
+          nodes: ld.items.map<BlockJSON>(l => {
+            return {
+              data: {
+                created: l.created,
+                tags: l.tags.map(t => ({ id: t.id, name: t.name }))
+              },
+              nodes: [
                 {
-                  text: l.content
+                  leaves: [
+                    {
+                      text: l.content
+                    }
+                  ],
+                  object: 'text'
                 }
               ],
-              object: "text"
-            }
-          ],
-          object: "block",
-          type: l.type
+              object: 'block',
+              type: l.type
+            };
+          }),
+          object: 'block',
+          type: 'date'
         };
       })
     }
   };
 };
 
-const convertToLog = (value: ValueJSON): LogItem[] => {
+const convertToLog = (value: ValueJSON): LogDay[] => {
   if (!value || !value.document || !value.document.nodes) {
     return [];
   }
-  const logs = value.document.nodes.map<LogItem | null>((n: BlockJSON) => {
-    const { type, nodes, data } = n;
+  const logDays: LogDay[] = [];
 
-    if (!type || !data || !nodes || !(nodes.length > 0)) {
-      return null;
+  value.document.nodes.forEach(
+    (n: BlockJSON): void => {
+      const { type, nodes, data } = n;
+
+      if (!type || !data || !nodes || !(nodes.length > 0)) {
+        return;
+      }
+
+      const logItems: LogItem[] = [];
+
+      nodes.forEach(
+        (ld: BlockJSON): void => {
+          const ldType = ld.type;
+          const ldNodes = ld.nodes;
+          const ldData = ld.data;
+
+          if (!ldType || !ldData || !ldNodes || !(ldNodes.length > 0)) {
+            return;
+          }
+
+          const logType = StringHelpers.toPascalCase(ldType);
+
+          logItems.push(
+            new LogItem(
+              LogType[logType],
+              ldData.created,
+              ldNodes
+                .map((x: TextJSON) => x.leaves.map(l => l.text).join('\n'))
+                .join(),
+              ldData.tags,
+              ldData.due
+            )
+          );
+        }
+      );
+
+      logDays.push(new LogDay(data.created, logItems));
     }
+  );
 
-    const logType = StringHelpers.toPascalCase(type);
-
-    return new LogItem(
-      LogType[logType],
-      data.created,
-      nodes.map((x: TextJSON) => x.leaves.map(l => l.text).join("\n")).join(),
-      data.tags,
-      data.due
-    );
-  });
-
-  const out: LogItem[] = [];
-  logs.forEach(l => {
-    if (l !== null) {
-      out.push(l);
-    }
-  });
-
-  return out;
+  return logDays;
 };
 
 export const editorService = new EditorService();

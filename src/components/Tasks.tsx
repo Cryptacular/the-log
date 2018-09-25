@@ -10,8 +10,8 @@ export class Tasks extends React.Component<ITasksProps> {
   public render() {
     return (
       <div className="log">
-        {this.props.tasks.filter(t => t.content.length > 0).map(t => (
-          <div className="log-itemContainer">
+        {this.props.tasks.filter(t => t.content.length > 0).map((t, i) => (
+          <div className="log-itemContainer" key={`task-${t.created}-${i}`}>
             <span className="log-type">
               <span>{BulletType.Task}</span>
               <span>&nbsp;</span>
