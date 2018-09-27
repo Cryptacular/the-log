@@ -2,6 +2,7 @@ import * as React from 'react';
 import './App.css';
 import { Log } from './components/Log';
 import { Tasks } from './components/Tasks';
+import { DateHelpers } from './helpers/DateHelpers';
 import { LogItem } from './models/LogItem';
 import { LogType } from './models/LogType';
 import { IEditorService } from './services/IEditorService';
@@ -65,6 +66,13 @@ class App extends React.Component<IAppProps, IAppState> {
   }
 
   private onChange(logs: LogItem[]): void {
+    const hasNewLog = logs.length > this.state.logs.length;
+
+    if (hasNewLog) {
+      const lastLog = logs[logs.length - 1];
+      lastLog.created = DateHelpers.getTodayWithoutTime();
+    }
+
     this.logService.Save(logs);
     this.setState({ logs });
   }

@@ -1,4 +1,6 @@
+import { Dictionary, groupBy } from 'lodash';
 import { BlockJSON, TextJSON, Value, ValueJSON } from 'slate';
+import { DateHelpers } from '../helpers/DateHelpers';
 import { StringHelpers } from '../helpers/StringHelpers';
 import { LogDay } from '../models/LogDay';
 import { LogItem } from '../models/LogItem';
@@ -6,6 +8,27 @@ import { LogType } from '../models/LogType';
 import { IEditorService } from './IEditorService';
 
 class EditorService implements IEditorService {
+  public logToValue(logs: LogItem[]): Value {
+    const logDaysDictionary: Dictionary<LogItem[]> = groupBy(
+      logs,
+      x => x.created
+    );
+    const logDays: LogDay[] = [];
+
+    for (const date in logDaysDictionary) {
+      if (logDaysDictionary.hasOwnProperty(date)) {
+        const created = new Date(date);
+        const items = logDaysDictionary[date];
+        const logDay = new LogDay(created, items);
+        logDays.push(logDay);
+      }
+    }
+
+    const value = this.logDayToValue(logDays);
+
+    return value;
+  }
+
   public logDayToValue(logs: LogDay[]): Value {
     return Value.fromJSON(convertToValue(logs));
   }
@@ -22,13 +45,15 @@ const convertToValue = (logDays: LogDay[]): ValueJSON => {
       nodes: logDays.map<BlockJSON>(ld => {
         return {
           data: {
-            created: ld.created
+            created: ld.created || DateHelpers.getTodayWithoutTime()
           },
           nodes: ld.items.map<BlockJSON>(l => {
             return {
               data: {
-                created: l.created,
-                tags: l.tags.map(t => ({ id: t.id, name: t.name }))
+                created: l.created || DateHelpers.getTodayWithoutTime(),
+                tags: l.tags
+                  ? l.tags.map(t => ({ id: t.id, name: t.name }))
+                  : []
               },
               nodes: [
                 {
@@ -83,7 +108,7 @@ const convertToLog = (value: ValueJSON): LogDay[] => {
           logItems.push(
             new LogItem(
               LogType[logType],
-              ldData.created,
+              new Date(ldData.created) || DateHelpers.getTodayWithoutTime(),
               ldNodes
                 .map((x: TextJSON) => x.leaves.map(l => l.text).join('\n'))
                 .join(),

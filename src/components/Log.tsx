@@ -1,11 +1,10 @@
-import { Dictionary, groupBy } from 'lodash';
 import * as moment from 'moment';
 import * as React from 'react';
 import { Change, Value } from 'slate';
 import { Editor, RenderNodeProps } from 'slate-react';
+import { DateHelpers } from '../helpers/DateHelpers';
 import { StringHelpers } from '../helpers/StringHelpers';
 import { BulletType } from '../models/BulletType';
-import { LogDay } from '../models/LogDay';
 import { LogItem } from '../models/LogItem';
 import { LogType } from '../models/LogType';
 import { IEditorService } from '../services/IEditorService';
@@ -28,25 +27,8 @@ export class Log extends React.Component<ILogProps, ILogState> {
     super(props);
 
     this.editorService = props.editorService;
-
     const { logs } = props;
-    const logDaysDictionary: Dictionary<LogItem[]> = groupBy(
-      logs,
-      x => x.created
-    );
-    const logDays: LogDay[] = [];
-
-    for (const date in logDaysDictionary) {
-      if (logDaysDictionary.hasOwnProperty(date)) {
-        const created = new Date(date);
-        const items = logDaysDictionary[date];
-        const logDay = new LogDay(created, items);
-        logDays.push(logDay);
-      }
-    }
-
-    const value =
-      logs.length > 0 ? this.editorService.logDayToValue(logDays) : null;
+    const value = this.editorService.logToValue(logs);
 
     this.state = {
       value
@@ -110,14 +92,22 @@ export class Log extends React.Component<ILogProps, ILogState> {
       }
     }
 
-    if (key === 'd' && (event.ctrlKey || event.metaKey)) {
-      const currentBlocks = change.value.blocks;
+    const currentBlocks = change.value.blocks;
 
+    if (key === 'd' && (event.ctrlKey || event.metaKey)) {
       if (currentBlocks.some(b => !!b && b.type === 'task')) {
         change.setBlocks('done');
       } else if (currentBlocks.some(b => !!b && b.type === 'done')) {
         change.setBlocks('task');
       }
+    }
+
+    if (key === 'Enter') {
+      currentBlocks.forEach(
+        b =>
+          !!b &&
+          b.data.set('created', DateHelpers.getTodayWithoutTime().toString())
+      );
     }
   }
 
@@ -127,12 +117,17 @@ export class Log extends React.Component<ILogProps, ILogState> {
     const logType = StringHelpers.toPascalCase(type);
 
     const created: string = data.get('created');
-    const createdDate = new Date(created);
 
     const output =
       type === LogType.Date ? (
         <div>
-          <div className="log-date">{moment(createdDate).calendar()}</div>
+          <div className="log-date">
+            {
+              moment(created)
+                .calendar()
+                .split(' ')[0]
+            }
+          </div>
           <div {...props} />
         </div>
       ) : (
