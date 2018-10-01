@@ -1,7 +1,7 @@
 import * as moment from 'moment';
 import * as React from 'react';
-import { Change, Value } from 'slate';
-import { Editor, RenderNodeProps } from 'slate-react';
+import { Change, Decoration, Node, Value } from 'slate';
+import { Editor, RenderMarkProps, RenderNodeProps } from 'slate-react';
 import { DateHelpers } from '../helpers/DateHelpers';
 import { StringHelpers } from '../helpers/StringHelpers';
 import { BulletType } from '../models/BulletType';
@@ -9,6 +9,7 @@ import { LogItem } from '../models/LogItem';
 import { LogType } from '../models/LogType';
 import { IEditorService } from '../services/IEditorService';
 import './Log.css';
+import { TagMark } from './marks/TagMark';
 
 interface ILogProps {
   logs: LogItem[];
@@ -37,6 +38,8 @@ export class Log extends React.Component<ILogProps, ILogState> {
     this.onChange = this.onChange.bind(this);
     this.onKeyDown = this.onKeyDown.bind(this);
     this.renderNode = this.renderNode.bind(this);
+    this.renderMark = this.renderMark.bind(this);
+    this.decorateNode = this.decorateNode.bind(this);
   }
 
   public render() {
@@ -50,6 +53,8 @@ export class Log extends React.Component<ILogProps, ILogState> {
             onChange={this.onChange}
             onKeyDown={this.onKeyDown}
             renderNode={this.renderNode}
+            renderMark={this.renderMark}
+            decorateNode={this.decorateNode}
           />
         ) : (
           'Loading'
@@ -125,7 +130,7 @@ export class Log extends React.Component<ILogProps, ILogState> {
             {
               moment(created)
                 .calendar()
-                .split(' ')[0]
+                .split('at')[0]
             }
           </div>
           <div {...props} />
@@ -144,5 +149,59 @@ export class Log extends React.Component<ILogProps, ILogState> {
       );
 
     return output;
+  }
+
+  private renderMark(props: RenderMarkProps) {
+    switch (props.mark.type) {
+      case 'tag':
+        return <TagMark {...props} />;
+    }
+
+    return;
+  }
+
+  private decorateNode(node: Node): Decoration[] | void {
+    if (node.object !== 'block') {
+      return;
+    }
+
+    const text = node.text;
+    const texts = node.getTexts().toArray();
+    const startText = texts.shift();
+
+    if (!startText) {
+      return;
+    }
+
+    const decorations: Decoration[] = [];
+
+    console.log(text);
+
+    for (let i = 0; i < text.length; i++) {
+      const currentChar = text[i];
+      if (currentChar === '#') {
+        const start = i;
+        const remainingString = text.substr(start);
+        const endOfTag = remainingString.indexOf(' ');
+        const end = endOfTag > 0 ? start + endOfTag : text.length;
+
+        const decoration = Decoration.fromJSON({
+          anchor: {
+            key: startText.key,
+            object: 'point',
+            offset: start
+          },
+          focus: {
+            key: startText.key,
+            object: 'point',
+            offset: end
+          },
+          mark: { type: 'tag' }
+        });
+        decorations.push(decoration);
+      }
+    }
+
+    return decorations;
   }
 }
