@@ -48,18 +48,16 @@ const convertToValue = (logDays: LogDay[]): ValueJSON => {
             created: ld.created || DateHelpers.getTodayWithoutTime()
           },
           nodes: ld.items.map<BlockJSON>(l => {
+            const tags = l.tags.map(t => `#${t}`);
             return {
               data: {
-                created: l.created || DateHelpers.getTodayWithoutTime(),
-                tags: l.tags
-                  ? l.tags.map(t => ({ id: t.id, name: t.name }))
-                  : []
+                created: l.created || DateHelpers.getTodayWithoutTime()
               },
               nodes: [
                 {
                   leaves: [
                     {
-                      text: l.content
+                      text: `${l.content} ${tags.join(' ')}`
                     }
                   ],
                   object: 'text'
@@ -104,15 +102,20 @@ const convertToLog = (value: ValueJSON): LogDay[] => {
           }
 
           const logType = StringHelpers.toPascalCase(ldType);
+          const content = ldNodes
+            .map((x: TextJSON) => x.leaves.map(l => l.text).join('\n'))
+            .join();
+          const tagMatches = content.match(/#[\S]+/g);
+          const tags =
+            (tagMatches && tagMatches.map(tm => tm.toString().slice(1))) || [];
+          const contentWithoutTags = content.replace(/#[\S]+/g, '').trim();
 
           logItems.push(
             new LogItem(
               LogType[logType],
               new Date(ldData.created) || DateHelpers.getTodayWithoutTime(),
-              ldNodes
-                .map((x: TextJSON) => x.leaves.map(l => l.text).join('\n'))
-                .join(),
-              ldData.tags,
+              contentWithoutTags,
+              tags,
               ldData.due
             )
           );

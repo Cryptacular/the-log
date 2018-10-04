@@ -34,7 +34,8 @@
   color: rgba(210, 20, 66, 0.75);
 }
 
-.log-item--done {
+.log-item--done,
+.log-item--done .log-tag {
   text-decoration: line-through;
   font-style: italic;
 }
@@ -48,5 +49,6 @@
   border-radius: 20px;
   color: #eee;
   display: inline-block;
+  font-size: 75%;
   padding: 3px 8px;
 }

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import './App.css';
+import { Filter } from './components/Filter';
 import { Log } from './components/Log';
 import { Tasks } from './components/Tasks';
 import { DateHelpers } from './helpers/DateHelpers';
@@ -36,6 +37,20 @@ class App extends React.Component<IAppProps, IAppState> {
 
   public render() {
     const { logs } = this.state;
+    let tags: string[] = [];
+    logs.forEach(l => {
+      const newTags: string[] = [];
+
+      l.tags.forEach(lt => {
+        if (!tags.some(t => t === lt)) {
+          newTags.push(lt);
+        }
+      });
+
+      if (newTags.length > 0) {
+        tags = [...tags, ...newTags];
+      }
+    });
 
     return logs.length > 0 ? (
       <div className="grid">
@@ -49,6 +64,7 @@ class App extends React.Component<IAppProps, IAppState> {
         </div>
         <div className="grid-section grid-section--filter grid-section--right">
           <div className="log-title">Filter</div>
+          <Filter tags={tags} />
         </div>
         <div className="grid-section grid-section--tasks grid-section--right">
           <div className="log-title">Tasks</div>

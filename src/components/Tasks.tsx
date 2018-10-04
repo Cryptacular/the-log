@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { BulletType } from '../models/BulletType';
 import { LogItem } from '../models/LogItem';
+import { TagMark } from './marks/TagMark';
 
 interface ITasksProps {
   tasks: LogItem[];
@@ -16,7 +17,12 @@ export class Tasks extends React.Component<ITasksProps> {
               <span>{BulletType.Task}</span>
               <span>&nbsp;</span>
             </span>
-            <span className="log-item log-item--task">{t.content}</span>
+            <span className="log-item log-item--task">
+              {t.content}{' '}
+              {t.tags.map(tt => (
+                <TagMark>#{tt}</TagMark>
+              ))}
+            </span>
           </div>
         ))}
       </div>
