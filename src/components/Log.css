@@ -51,4 +51,16 @@
   display: inline-block;
   font-size: 75%;
   padding: 3px 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-out, box-shadow 0.3s ease-out;
+}
+
+.log-tag:hover {
+  background: rgba(0, 0, 0, 0.6);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.log-tag:focus,
+.log-tag:active {
+  background: rgba(0, 0, 0, 0.8);
 }
