@@ -15,6 +15,7 @@ A simple Electron app for taking notes and tracking tasks.
 - [ ] Filter by tags
 - [ ] Add date stamps
 - [ ] Add app icon
+  - This obviously needs to be some cheesy mix between a wooden log and a paper log. The cheesier the better.
 - [ ] Include Fira Code font
 - [ ] Slack-like inline Markdown formatting (bold, italic, code etc)
 - [ ] Fix up/down arrow navigation
