@@ -14,7 +14,7 @@ const startUrl =
 
 function createWindow() {
   win = new BrowserWindow({
-    backgroundColor: "#f2994a",
+    backgroundColor: "#ff8c25",
     height: 600,
     titleBarStyle: "hiddenInset",
     width: 1024
