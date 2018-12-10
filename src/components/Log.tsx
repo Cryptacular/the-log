@@ -9,6 +9,7 @@ import { LogItem } from '../models/LogItem';
 import { LogType } from '../models/LogType';
 import { IEditorService } from '../services/IEditorService';
 import './Log.css';
+import { DueDateMark } from './marks/DueDateMark';
 import { TagMark } from './marks/TagMark';
 
 interface ILogProps {
@@ -155,6 +156,8 @@ export class Log extends React.Component<ILogProps, ILogState> {
     switch (props.mark.type) {
       case 'tag':
         return <TagMark {...props} />;
+      case 'due':
+        return <DueDateMark {...props} />;
     }
 
     return;
@@ -195,6 +198,26 @@ export class Log extends React.Component<ILogProps, ILogState> {
             offset: end
           },
           mark: { type: 'tag' }
+        });
+        decorations.push(decoration);
+      } else if (currentChar === '@') {
+        const start = i;
+        const remainingString = text.substr(start);
+        const endOfDue = remainingString.indexOf(' ');
+        const end = endOfDue > 0 ? start + endOfDue : text.length;
+
+        const decoration = Decoration.fromJSON({
+          anchor: {
+            key: startText.key,
+            object: 'point',
+            offset: start
+          },
+          focus: {
+            key: startText.key,
+            object: 'point',
+            offset: end
+          },
+          mark: { type: 'due' }
         });
         decorations.push(decoration);
       }
