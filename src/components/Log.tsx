@@ -43,11 +43,18 @@ export class Log extends React.Component<ILogProps, ILogState> {
     this.decorateNode = this.decorateNode.bind(this);
   }
 
+  public componentDidMount() {
+    const scrollable = document.getElementById('scrollableLog');
+    if (scrollable) {
+      scrollable.scrollBy(0, scrollable.scrollHeight);
+    }
+  }
+
   public render() {
     const { value } = this.state;
 
     return (
-      <div className="log">
+      <div className="log" id="scrollableLog">
         {value !== null ? (
           <Editor
             value={value}
