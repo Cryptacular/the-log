@@ -34,7 +34,7 @@ export class Tasks extends React.Component<ITasksProps> {
           let dateDisplayName = '';
 
           if (t.due) {
-            dateDisplayName = moment(t.due).fromNow(true);
+            dateDisplayName = moment(t.due).fromNow();
             shouldDisplayDate = displayedDates.indexOf(dateDisplayName) < 0;
             displayedDates.push(dateDisplayName);
           }

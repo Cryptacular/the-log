@@ -105,6 +105,7 @@ const convertToLog = (value: ValueJSON): LogDay[] => {
           const content = ldNodes
             .map((x: TextJSON) => x.leaves.map(l => l.text).join('\n'))
             .join();
+          const created = new Date(ldData.created) || DateHelpers.getTodayWithoutTime();
 
           const tagMatches = content.match(/#[\S]+/g);
           const tags =
@@ -114,12 +115,12 @@ const convertToLog = (value: ValueJSON): LogDay[] => {
           const dueMatches = contentWithoutTags.match(/@[\S]+/g);
           const due =
             (dueMatches && dueMatches.map(dm => dm.toString().slice(1))) || [];
-          const dueDates = due.map(d => DateHelpers.parseDateString(d));
+          const dueDates = due.map(d => DateHelpers.parseDateString(d, created));
 
           logItems.push(
             new LogItem(
               LogType[logType],
-              new Date(ldData.created) || DateHelpers.getTodayWithoutTime(),
+              created,
               contentWithoutTags,
               tags,
               dueDates[0]

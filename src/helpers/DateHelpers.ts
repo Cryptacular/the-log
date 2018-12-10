@@ -7,13 +7,13 @@ export const DateHelpers = {
     return today;
   },
 
-  parseDateString(date: string): Date {
+  parseDateString(date: string, created: Date): Date {
     if (customDateIdentifiers.hasOwnProperty(date.toLowerCase())) {
-      return customDateIdentifiers[date];
+      return customDateIdentifiers[date](created);
     }
 
     if (daysInWeek.hasOwnProperty(date.toLowerCase())) {
-      return week
+      return getWeek(created)
         .filter(d => d.day() === daysInWeek[date.toLowerCase()])[0]
         .toDate();
     }
@@ -32,26 +32,21 @@ export const DateHelpers = {
 
 const zeroDate = new Date(0, 0);
 
-const week = (() => {
-  const today = moment();
-  today
-    .hour(0)
-    .minute(0)
-    .second(0)
-    .millisecond(0);
-  const date = today.date();
+const getWeek = (from: Date) => {
+  const current = moment(from);
+  const date = current.date();
   const dates = [];
 
   for (let i = 0; i < 8; i++) {
-    dates.push(moment(today).date(date + i));
+    dates.push(moment(current).date(date + i));
   }
 
   return dates;
-})();
+};
 
 const customDateIdentifiers: object = {
-  today: week[0].toDate(),
-  tomorrow: week[1].toDate()
+  today: (created: Date) => getWeek(created)[0].toDate(),
+  tomorrow: (created: Date) => getWeek(created)[1].toDate()
 };
 
 const daysInWeek: object = {
