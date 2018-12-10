@@ -1,6 +1,7 @@
-import { LogType } from "./LogType";
+import { LogType } from './LogType';
 
 export class LogItem {
+  public id: number;
   public type: LogType;
   public created: Date;
   public content: string;
@@ -14,6 +15,7 @@ export class LogItem {
     tags: string[],
     due?: Date
   ) {
+    this.id = Math.floor(Math.random() * 1000000);
     this.type = type;
     this.created = created;
     this.content = content;

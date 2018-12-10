@@ -21,6 +21,23 @@
   color: #d44c21;
 }
 
+.logType-icon {
+  position: relative;
+}
+
+.logType-icon:hover {
+  color: transparent;
+  cursor: pointer;
+}
+
+.logType-icon:hover:before {
+  content: '✔';
+  color: white;
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
 .log-item {
   flex: 1;
   margin-bottom: 5px;

@@ -16,6 +16,7 @@ interface IAppProps {
 
 interface IAppState {
   logs: LogItem[];
+  shouldLogsUpdate: boolean;
 }
 
 class App extends React.Component<IAppProps, IAppState> {
@@ -29,14 +30,17 @@ class App extends React.Component<IAppProps, IAppState> {
     this.editorService = props.editorService;
 
     this.state = {
-      logs: []
+      logs: [],
+      shouldLogsUpdate: false
     };
 
     this.onChange = this.onChange.bind(this);
+    this.completeTask = this.completeTask.bind(this);
+    this.onLogsUpdated = this.onLogsUpdated.bind(this);
   }
 
   public render() {
-    const { logs } = this.state;
+    const { logs, shouldLogsUpdate } = this.state;
     let tags: string[] = [];
     logs.forEach(l => {
       const newTags: string[] = [];
@@ -59,7 +63,9 @@ class App extends React.Component<IAppProps, IAppState> {
           <Log
             logs={logs}
             editorService={this.editorService}
+            shouldLogsUpdate={shouldLogsUpdate}
             onLogsChange={this.onChange}
+            onLogsUpdated={this.onLogsUpdated}
           />
         </div>
         <div className="grid-section grid-section--filter grid-section--right">
@@ -68,7 +74,10 @@ class App extends React.Component<IAppProps, IAppState> {
         </div>
         <div className="grid-section grid-section--tasks grid-section--right">
           <div className="log-title">Tasks</div>
-          <Tasks tasks={logs.filter(l => l.type === LogType.Task)} />
+          <Tasks
+            tasks={logs.filter(l => l.type === LogType.Task)}
+            onComplete={this.completeTask}
+          />
         </div>
       </div>
     ) : (
@@ -91,6 +100,26 @@ class App extends React.Component<IAppProps, IAppState> {
 
     this.logService.Save(logs);
     this.setState({ logs });
+  }
+
+  private completeTask(id: number) {
+    const logs = [...this.state.logs];
+
+    for (const log of logs) {
+      if (log.id === id) {
+        log.type = LogType.Done;
+        break;
+      }
+    }
+
+    this.logService.Save(logs);
+    this.setState({ logs, shouldLogsUpdate: true });
+  }
+
+  private onLogsUpdated() {
+    this.setState({
+      shouldLogsUpdate: false
+    });
   }
 }
 

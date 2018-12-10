@@ -7,9 +7,15 @@ import { TagMark } from './marks/TagMark';
 
 interface ITasksProps {
   tasks: LogItem[];
+  onComplete: (id: number) => void;
 }
 
 export class Tasks extends React.Component<ITasksProps> {
+  constructor(props: ITasksProps) {
+    super(props);
+    this.onBulletClick = this.onBulletClick.bind(this);
+  }
+
   public render() {
     let items: LogItem[] = [];
     const tasks = this.filterByDueDate(this.getValidTasks());
@@ -46,11 +52,17 @@ export class Tasks extends React.Component<ITasksProps> {
               )}
               <div className="log-itemContainer">
                 <span className="log-type">
-                  <span>{BulletType.Task}</span>
+                  <a
+                    className="logType-icon"
+                    onClick={this.onBulletClick}
+                    data-id={`${t.id}`}
+                  >
+                    {BulletType.Task}
+                  </a>
                   <span>&nbsp;</span>
                 </span>
                 <span className="log-item log-item--task">
-                  {t.content}
+                  {t.content.replace(/\s+@\S+/g, '').trim()}
                   {t.tags.map(tt => (
                     <span>
                       {' '}
@@ -83,5 +95,9 @@ export class Tasks extends React.Component<ITasksProps> {
     });
 
     return tasksByDueDate;
+  }
+
+  private onBulletClick(e: any) {
+    this.props.onComplete(parseInt(e.target.dataset.id, 10));
   }
 }

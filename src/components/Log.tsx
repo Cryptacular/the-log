@@ -15,7 +15,9 @@ import { TagMark } from './marks/TagMark';
 interface ILogProps {
   logs: LogItem[];
   editorService: IEditorService;
+  shouldLogsUpdate: boolean;
   onLogsChange: (logs: LogItem[]) => void;
+  onLogsUpdated: () => void;
 }
 
 interface ILogState {
@@ -47,6 +49,14 @@ export class Log extends React.Component<ILogProps, ILogState> {
     const scrollable = document.getElementById('scrollableLog');
     if (scrollable) {
       scrollable.scrollBy(0, scrollable.scrollHeight);
+    }
+  }
+
+  public componentWillReceiveProps(props: ILogProps) {
+    const { shouldLogsUpdate, logs, onLogsUpdated } = props;
+    if (shouldLogsUpdate) {
+      this.setState({ value: this.editorService.logToValue(logs) });
+      onLogsUpdated();
     }
   }
 
