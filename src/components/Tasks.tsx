@@ -30,7 +30,7 @@ export class Tasks extends React.Component<ITasksProps> {
       items = [...items, ...next.value[1]];
     }
 
-    items = items.sort((a, b) => (!a.due || (b.due && a.due < b.due) ? -1 : 1));
+    items = items.sort((a, b) => (!a.due || (b.due && a.due > b.due) ? -1 : 1));
     const displayedDates: string[] = [];
 
     return (
@@ -40,7 +40,12 @@ export class Tasks extends React.Component<ITasksProps> {
           let dateDisplayName = '';
 
           if (t.due) {
-            dateDisplayName = moment(t.due).fromNow();
+            dateDisplayName =
+              t.due > DateHelpers.getDateOneMonthFromNow()
+                ? moment(t.due).fromNow()
+                : moment(t.due)
+                    .calendar()
+                    .split('at')[0];
             shouldDisplayDate = displayedDates.indexOf(dateDisplayName) < 0;
             displayedDates.push(dateDisplayName);
           }

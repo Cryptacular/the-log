@@ -7,6 +7,18 @@ export const DateHelpers = {
     return today;
   },
 
+  getTomorrowWithoutTime(): Date {
+    const tomorrow = moment('tomorrow').toDate();
+    tomorrow.setHours(0, 0, 0, 0);
+    return tomorrow;
+  },
+
+  getDateOneMonthFromNow(): Date {
+    const nextMonth = moment('in 30 days').toDate();
+    nextMonth.setHours(0, 0, 0, 0);
+    return nextMonth;
+  },
+
   parseDateString(date: string, created: Date): Date {
     if (customDateIdentifiers.hasOwnProperty(date.toLowerCase())) {
       return customDateIdentifiers[date](created);
