@@ -1,3 +1,5 @@
+import * as moment from 'moment';
+import 'moment/locale/en-nz';
 import * as React from 'react';
 import './App.css';
 import { Filter } from './components/Filter';
@@ -37,6 +39,8 @@ class App extends React.Component<IAppProps, IAppState> {
     this.onChange = this.onChange.bind(this);
     this.completeTask = this.completeTask.bind(this);
     this.onLogsUpdated = this.onLogsUpdated.bind(this);
+
+    moment.locale('en-nz');
   }
 
   public render() {
