@@ -21,7 +21,7 @@
 }
 
 .grid-section--right .log-title::after {
-  content: " #";
+  content: ' #';
 }
 
 .grid-section--right .log-itemContainer,
@@ -46,9 +46,8 @@
 .grid-section--tasks {
   grid-column-start: right;
   grid-column-end: right;
-  grid-row-start: bottom;
-  grid-row-end: bottom;
-  align-self: end;
+  grid-row-start: top;
+  grid-row-end: bottom-gutter;
 }
 
 .log-title {
@@ -59,7 +58,7 @@
 
 .log-title::before,
 .log-title::after {
-  content: "# ";
+  content: '# ';
   color: #d44c21;
   font-weight: normal;
 }

@@ -2,7 +2,6 @@ import * as moment from 'moment';
 import 'moment/locale/en-nz';
 import * as React from 'react';
 import './App.css';
-import { Filter } from './components/Filter';
 import { Log } from './components/Log';
 import { Tasks } from './components/Tasks';
 import { DateHelpers } from './helpers/DateHelpers';
@@ -71,10 +70,6 @@ class App extends React.Component<IAppProps, IAppState> {
             onLogsChange={this.onChange}
             onLogsUpdated={this.onLogsUpdated}
           />
-        </div>
-        <div className="grid-section grid-section--filter grid-section--right">
-          <div className="log-title">Filter</div>
-          <Filter tags={tags} />
         </div>
         <div className="grid-section grid-section--tasks grid-section--right">
           <div className="log-title">Tasks</div>

@@ -16,6 +16,13 @@ export class Tasks extends React.Component<ITasksProps> {
     this.onBulletClick = this.onBulletClick.bind(this);
   }
 
+  public componentDidMount() {
+    const scrollable = document.getElementById('scrollableTasks');
+    if (scrollable) {
+      scrollable.scrollBy(0, scrollable.scrollHeight);
+    }
+  }
+
   public render() {
     let items: LogItem[] = [];
     const tasks = this.filterByDueDate(this.getValidTasks());
@@ -34,7 +41,7 @@ export class Tasks extends React.Component<ITasksProps> {
     const displayedDates: string[] = [];
 
     return (
-      <div className="log">
+      <div className="log" id="scrollableTasks">
         {items.map((t, i) => {
           let shouldDisplayDate = false;
           let dateDisplayName = '';
