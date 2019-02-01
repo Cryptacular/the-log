@@ -117,11 +117,43 @@ export class Log extends React.Component<ILogProps, ILogState> {
 
     const currentBlocks = change.value.blocks;
 
-    if (key === 'd' && (event.ctrlKey || event.metaKey)) {
-      if (currentBlocks.some(b => !!b && b.type === 'task')) {
-        change.setBlocks('done');
-      } else if (currentBlocks.some(b => !!b && b.type === 'done')) {
-        change.setBlocks('task');
+    // Shortcuts
+    if (event.ctrlKey || event.metaKey) {
+      switch (key) {
+        case 'd':
+          if (currentBlocks.some(b => !!b && b.type === LogType.Task)) {
+            change.setBlocks(LogType.Done);
+          } else if (currentBlocks.some(b => !!b && b.type === LogType.Done)) {
+            change.setBlocks(LogType.Task);
+          }
+          break;
+
+        case '1':
+          if (!currentBlocks.some(b => !!b && b.type === LogType.Note)) {
+            change.setBlocks(LogType.Note);
+          }
+          break;
+
+        case '2':
+          if (!currentBlocks.some(b => !!b && b.type === LogType.Event)) {
+            change.setBlocks(LogType.Event);
+          }
+          break;
+
+        case '3':
+          if (!currentBlocks.some(b => !!b && b.type === LogType.Task)) {
+            change.setBlocks(LogType.Task);
+          }
+          break;
+
+        case '4':
+          if (!currentBlocks.some(b => !!b && b.type === LogType.Done)) {
+            change.setBlocks(LogType.Done);
+          }
+          break;
+
+        default:
+          break;
       }
     }
 
